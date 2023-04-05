@@ -6,9 +6,17 @@ from scipy.stats import chi2
 
 chat_id = 425154307 # Ваш chat ID, не меняйте название переменной
 
+
 def solution(p: float, x: np.array) -> tuple:
     alpha = 1 - p
-    loc = x.mean()
-    #scale = np.sqrt(np.var(x)) / np.sqrt(len(x))
-    return  loc *np.sqrt(chi2.ppf(alpha / 2, 1)/(27*2)), \
-           loc *np.sqrt(chi2.ppf(1 - alpha / 2, 1)/(27*2))
+    n = len(x)
+    
+    x2 = np.array([xi**2 for xi in x])
+    x2_mean = x2.mean()
+    
+    chi2_rv = chi2(df = 2 * n)
+    
+    left = chi2_rv.ppf(1 - alpha / 2) #b
+    right = chi2_rv.ppf(alpha / 2) #a
+    
+    return np.sqrt(n * x2_mean / (left * 27)), np.sqrt(n * x2_mean / (right * 27))
